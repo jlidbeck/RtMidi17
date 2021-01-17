@@ -58,6 +58,7 @@
 */
 #include <algorithm>
 #include <cassert>
+#include <chrono>
 #include <functional>
 #include <iostream>
 #include <memory>
@@ -208,6 +209,17 @@ public:
 
 private:
   std::unique_ptr<class observer_api> impl_;
+};
+
+/**
+ * Used to determine how large sent messages will be chunked.
+ */
+struct RTMIDI17_EXPORT chunking_parameters {
+  std::chrono::milliseconds interval{};
+  int32_t size{};
+  std::function<void(const chunking_parameters&)> wait = chunking_parameters::default_wait;
+
+  static void default_wait(const chunking_parameters& self);
 };
 
 /**********************************************************************/
@@ -506,6 +518,12 @@ public:
   void set_client_name(std::string_view clientName);
 
   void set_port_name(std::string_view portName);
+
+  /**
+   * For large messages, chunk their content and wait.
+   * Setting a null optional will disable chunking.
+   */
+  void set_chunking_parameters(std::optional<chunking_parameters> parameters);
 
 private:
   std::unique_ptr<class midi_out_api> rtapi_;
