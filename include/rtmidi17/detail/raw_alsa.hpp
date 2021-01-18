@@ -466,9 +466,6 @@ public:
     const unsigned char* data = begin;
     const unsigned char* end = begin + size;
 
-    snd_rawmidi_status_t* st{};
-    snd_rawmidi_status_alloca(&st);
-
     const std::size_t chunk_size = std::min(get_chunk_size(), size);
 
     // Send the first buffer
